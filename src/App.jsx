@@ -6,6 +6,7 @@ import Result from './pages/Result';
 import Ranking from './pages/Ranking';
 import { Sparkles } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
+import { Analytics } from '@vercel/analytics/react';
 
 function readStoredUsername() {
   try {
@@ -88,6 +89,7 @@ function App() {
           />
         )}
       </main>
+      <Analytics />
     </div>
   );
 }
