@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap')
+  layer(base);
+
+@import 'tailwindcss';
+
+@theme {
+  --color-pastel-pink: #fadadd;
+  --color-pastel-lavender: #e6d6ff;
+  --color-pastel-skyblue: #d6f0ff;
+  --color-pastel-beige: #f5e9e2;
+  --color-pastel-teal: #004d40;
+
+  --color-surface-light: rgba(255, 255, 255, 0.6);
+  --color-surface-hover: rgba(255, 255, 255, 0.8);
+
+  --font-heading: 'Playfair Display', 'Great Vibes', serif;
+  --font-body: Poppins, Inter, sans-serif;
+
+  --radius-2xl: 2rem;
+  --radius-3xl: 3rem;
+
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  --shadow-neumorphic:
+    5px 5px 15px rgba(0, 0, 0, 0.05), -5px -5px 15px rgba(255, 255, 255, 0.8);
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility glass-panel {
+  @apply bg-surface-light backdrop-blur-xl border border-white/30 shadow-glass rounded-2xl;
+}
+
+@utility neumorphic-btn {
+  @apply bg-white/40 backdrop-blur-md border border-white/50 shadow-neumorphic rounded-full px-8 py-3 font-medium transition-all duration-300;
+}
+
+@utility magnetic {
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  &:hover {
+    transform: scale(1.03) translateY(-1px);
+  }
+}
+
+@layer base {
+  body {
+    @apply font-body text-gray-800 antialiased overflow-x-hidden;
+    background: linear-gradient(135deg, #FADADD 0%, #E6D6FF 50%, #D6F0FF 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+/* Global Noise Overlay */
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.05;
+}
