@@ -6,6 +6,7 @@ import Result from './pages/Result';
 import Ranking from './pages/Ranking';
 import { Sparkles } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 function readStoredUsername() {
   try {
@@ -34,6 +35,7 @@ function App() {
 
   return (
     <div className="relative min-h-screen font-body text-gray-800 overflow-hidden">
+      <SpeedInsights />
       <div className="noise-overlay"></div>
       <BackgroundParticles />
       
