@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import Home from './pages/Home';
 import Username, { USERNAME_STORAGE } from './pages/Username';
 import Questions from './pages/Questions';
@@ -36,6 +37,7 @@ function App() {
     <div className="relative min-h-screen font-body text-gray-800 overflow-hidden">
       <div className="noise-overlay"></div>
       <BackgroundParticles />
+      <Analytics />
       
       <main className="relative z-10 min-h-screen flex items-center justify-center p-6">
         {currentPage === 'username' && (
