@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useMemo, startTransition } from 'react';
 import gsap from 'gsap';
 import { ArrowLeft, Clock, Award, Quote } from 'lucide-react';
-import { getBouquetsFromDB } from '../lib/db';
+import { getbouquetsFromDB } from '../lib/db';
 import flowersData from '../data/flowers.json';
 
 const Ranking = ({ onBack }) => {
@@ -20,7 +20,7 @@ const Ranking = ({ onBack }) => {
     let active = true;
 
     const loadRankings = async () => {
-      const data = await getBouquetsFromDB();
+      const data = await getbouquetsFromDB();
       if (active) {
         startTransition(() => setRankings(data));
       }
@@ -103,7 +103,7 @@ const Ranking = ({ onBack }) => {
             return (
               <div
                 key={item.id || idx}
-                className="ranking-item bg-white/40 hover:bg-white/55 backdrop-blur-md rounded-xl p-4 sm:p-5 border border-white/30 transition-all shadow-xs magnetic flex flex-col sm:flex-row gap-4 items-stretch sm:items-center"
+                className="ranking-item bg-white/40 hover:bg-white/55 backdrop-blur-md rounded-xl p-4 sm:p-5 border border-white/30 transition-all shadow-xs magnetic flex flex-col sm:flex-row gap-4 sm:gap-5"
               >
                 <div className="flex gap-4 flex-1 min-w-0">
                   <div
