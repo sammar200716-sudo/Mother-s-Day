@@ -8,6 +8,24 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const DB_KEY = 'bouquets_rankings';
 
+// Data migration: Move old key to new key if needed
+const migrateLocalStorageKey = () => {
+  try {
+    const oldKey = 'bouquet_rankings';
+    const oldData = localStorage.getItem(oldKey);
+    if (oldData && !localStorage.getItem(DB_KEY)) {
+      localStorage.setItem(DB_KEY, oldData);
+      localStorage.removeItem(oldKey);
+      console.log('Successfully migrated localStorage from "bouquet_rankings" to "bouquets_rankings"');
+    }
+  } catch (error) {
+    console.warn('Failed to migrate localStorage keys:', error);
+  }
+};
+
+// Run migration on module load
+migrateLocalStorageKey();
+
 const saveToLocalDB = async (bouquetsData) => {
   const id = bouquetsData.id || newId();
   try {
