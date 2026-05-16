@@ -6,16 +6,16 @@ const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-const DB_KEY = 'bouquet_rankings';
+const DB_KEY = 'bouquets_rankings';
 
-const saveToLocalDB = async (bouquetData) => {
-  const id = bouquetData.id || newId();
+const saveToLocalDB = async (bouquetsData) => {
+  const id = bouquetsData.id || newId();
   try {
     const existingStr = localStorage.getItem(DB_KEY);
     const existing = existingStr ? JSON.parse(existingStr) : [];
     const next = [
-      { id, ...bouquetData },
-      ...existing.filter((row) => row.userName !== bouquetData.userName),
+      { id, ...bouquetsData },
+      ...existing.filter((row) => row.userName !== bouquetsData.userName),
     ];
     localStorage.setItem(DB_KEY, JSON.stringify(next));
     return id;
@@ -58,23 +58,26 @@ function newId() {
   return `b-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-export const addBouquetToDB = async (bouquetData) => {
-  const userName = (bouquetData.userName || 'Guest').trim() || 'Guest';
-  const timestamp = bouquetData.timestamp || new Date().toISOString();
-  const id = bouquetData.id || newId();
-  const bouquetRow = {
-    id,
+const isValidUuid = (value) =>
+  typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+
+export const addbouquetsToDB = async (bouquetsData) => {
+  const userName = (bouquetsData.userName || 'Guest').trim() || 'Guest';
+  const timestamp = bouquetsData.timestamp || new Date().toISOString();
+  const bouquetsRow = {
     userName,
-    flowerName: bouquetData.flowerName,
-    name: bouquetData.name,
-    comment: bouquetData.comment ?? '',
+    flowerName: bouquetsData.flowerName,
+    name: bouquetsData.name,
+    comment: bouquetsData.comment ?? '',
     timestamp,
   };
+  const localId = bouquetsData.id || newId();
+  const rowForLocal = { id: localId, ...bouquetsRow };
 
   try {
     if (!isSupabaseConfigured) {
       console.error('Supabase not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY. Falling back to localStorage.');
-      return saveToLocalDB(bouquetRow);
+      return saveToLocalDB(rowForLocal);
     }
     const { data: existing, error: existingError } = await supabase
       .from('bouquets')
@@ -90,13 +93,13 @@ export const addBouquetToDB = async (bouquetData) => {
 
     if (existingRow?.id) {
       const updatePayload = {
-        flowerName: bouquetRow.flowerName,
-        name: bouquetRow.name,
-        timestamp: bouquetRow.timestamp,
+        flowerName: bouquetsRow.flowerName,
+        name: bouquetsRow.name,
+        timestamp: bouquetsRow.timestamp,
       };
 
-      if (bouquetData.comment !== undefined && bouquetData.comment !== '') {
-        updatePayload.comment = bouquetRow.comment;
+      if (bouquetsData.comment !== undefined && bouquetsData.comment !== '') {
+        updatePayload.comment = bouquetsRow.comment;
       }
 
       const { data, error } = await supabase
@@ -107,7 +110,7 @@ export const addBouquetToDB = async (bouquetData) => {
         .single();
       if (error) {
         console.error('Supabase update error', error);
-        return saveToLocalDB(bouquetRow);
+        return saveToLocalDB(rowForLocal);
       }
 
       return data?.id || existingRow.id;
@@ -115,23 +118,23 @@ export const addBouquetToDB = async (bouquetData) => {
 
     const { data, error } = await supabase
       .from('bouquets')
-      .insert([bouquetRow])
+      .insert([bouquetsRow])
       .select()
       .single();
 
     if (error) {
       console.error('Supabase insert error', error);
-      return saveToLocalDB(bouquetRow);
+      return saveToLocalDB(rowForLocal);
     }
 
-    return data?.id || id;
+    return data?.id || localId;
   } catch (error) {
-    console.error('Failed to save bouquet to Supabase', error);
-    return saveToLocalDB(bouquetRow);
+    console.error('Failed to save bouquets to Supabase', error);
+    return saveToLocalDB(rowForLocal);
   }
 };
 
-export const updateBouquetInDB = async (id, updates) => {
+export const updatebouquetsInDB = async (id, updates) => {
   if (!id) return null;
 
   try {
@@ -153,12 +156,12 @@ export const updateBouquetInDB = async (id, updates) => {
 
     return data;
   } catch (error) {
-    console.error('Failed to update bouquet in Supabase', error);
+    console.error('Failed to update bouquets in Supabase', error);
     return null;
   }
 };
 
-export const getBouquetsFromDB = async () => {
+export const getbouquetsFromDB =  async () => {
   try {
     if (!isSupabaseConfigured) {
       console.error('Supabase not configured. Falling back to localStorage for reads.');
