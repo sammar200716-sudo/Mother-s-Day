@@ -17,8 +17,19 @@ const Ranking = ({ onBack }) => {
   }, []);
 
   useEffect(() => {
-    const data = getBouquetsFromDB();
-    startTransition(() => setRankings(data));
+    let active = true;
+
+    const loadRankings = async () => {
+      const data = await getBouquetsFromDB();
+      if (active) {
+        startTransition(() => setRankings(data));
+      }
+    };
+
+    loadRankings();
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {

@@ -10,6 +10,7 @@ const Result = ({ result, userName = '', onViewRankings, onRestart }) => {
   const [processing, setProcessing] = useState(true);
   const [feedback, setFeedback] = useState('');
   const [bouquetDbId, setBouquetDbId] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
   const hasSavedEntryRef = useRef(false);
 
   useEffect(() => {
@@ -36,14 +37,24 @@ const Result = ({ result, userName = '', onViewRankings, onRestart }) => {
   useEffect(() => {
     if (processing || !result?.name || hasSavedEntryRef.current) return;
     hasSavedEntryRef.current = true;
-    const id = addBouquetToDB({
-      userName: userName.trim() || 'Guest',
-      flowerName: result.name,
-      name: result.name,
-      comment: '',
-      timestamp: new Date().toISOString(),
-    });
-    setBouquetDbId(id);
+    let active = true;
+    setIsSaving(true);
+    (async () => {
+      const id = await addBouquetToDB({
+        userName: userName.trim() || 'Guest',
+        flowerName: result.name,
+        name: result.name,
+        comment: '',
+        timestamp: new Date().toISOString(),
+      });
+      if (active) {
+        setBouquetDbId(id);
+        setIsSaving(false);
+      }
+    })();
+    return () => {
+      active = false;
+    };
   }, [processing, result, userName]);
 
   useEffect(() => {
@@ -195,6 +206,7 @@ const Result = ({ result, userName = '', onViewRankings, onRestart }) => {
             <div className="flex flex-col items-center md:items-end gap-6 w-full md:w-auto pb-14 md:pb-0 md:justify-end md:self-center">
               <button
                 type="button"
+                disabled={!bouquetDbId || isSaving}
                 onClick={onViewRankings}
                 className="w-full md:w-max flex items-center space-x-4 sm:space-x-6 bg-white/40 backdrop-blur-xl border border-white/60 p-4 sm:pr-8 rounded-full shadow-[0_8px_32px_rgba(142,59,70,0.1)] group hover:bg-white/60 transition-all cursor-pointer magnetic justify-center md:justify-start"
               >
@@ -206,7 +218,7 @@ const Result = ({ result, userName = '', onViewRankings, onRestart }) => {
                     View Others&apos; Flowers
                   </h3>
                   <p className="text-xs text-gray-600">
-                    See the beauty shared by other hearts.
+                    {isSaving ? 'Saving your bouquet…' : 'See the beauty shared by other hearts.'}
                   </p>
                 </div>
                 <ArrowRight className="w-5 h-5 text-[#8E3B46] shrink-0 group-hover:translate-x-1 transition-transform" />
