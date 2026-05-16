@@ -3,7 +3,7 @@ import gsap from 'gsap';
 import confetti from 'canvas-confetti';
 import BouquetCanvas from '../components/BouquetCanvas';
 import { ArrowRight, Heart, Sparkles, MessageCircleHeart, Send, Flower2 } from 'lucide-react';
-import { addBouquetToDB, updateBouquetInDB } from '../lib/db';
+import { addbouquetsToDB, updatebouquetsInDB } from '../lib/db';
 
 const Result = ({ result, userName = '', onViewRankings, onRestart }) => {
   const containerRef = useRef(null);
@@ -40,7 +40,7 @@ const Result = ({ result, userName = '', onViewRankings, onRestart }) => {
     let active = true;
     setIsSaving(true);
     (async () => {
-      const id = await addBouquetToDB({
+      const id = await addbouquetsToDB({
         userName: userName.trim() || 'Guest',
         flowerName: result.name,
         name: result.name,
@@ -109,7 +109,7 @@ const Result = ({ result, userName = '', onViewRankings, onRestart }) => {
 
   const handleSendFeedback = () => {
     if (!bouquetDbId || !feedback.trim()) return;
-    updateBouquetInDB(bouquetDbId, {
+    updatebouquetsInDB(bouquetDbId, {
       comment: feedback.trim(),
     });
     setFeedback('');
@@ -124,7 +124,7 @@ const Result = ({ result, userName = '', onViewRankings, onRestart }) => {
         <button
           type="button"
           onClick={onRestart}
-          className="fixed top-4 right-4 sm:top-6 sm:right-6 z-100 uppercase tracking-[0.12em] text-xs sm:text-sm font-medium text-[#8E3B46]/90 hover:text-[#8E3B46] hover:bg-white/40 backdrop-blur-md border border-white/50 rounded-full px-4 py-2.5 shadow-[0_4px_24px_rgba(142,59,70,0.12)] transition-colors magnetic"
+          className="fixed top-4 right-4 sm:top-6 sm:right-6 z-100 uppercase tracking-[0.12em] text-xs sm:text-sm font-medium text-[#8E3B46]/90 hover:text-[#8E3B46] hover:bg-white/40 backdrop-blur-md border border-white/30 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full transition-all duration-300"
         >
           Start again
         </button>
@@ -167,7 +167,7 @@ const Result = ({ result, userName = '', onViewRankings, onRestart }) => {
           </div>
 
           <div className="w-full max-w-6xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-8 mt-auto z-20 result-anim">
-            <div className="w-full md:max-w-[min(380px,calc(100vw-4rem))] bg-white/40 backdrop-blur-xl border border-white/60 p-5 sm:p-6 rounded-[2rem] shadow-[0_8px_32px_rgba(142,59,70,0.1)] transition-transform hover:scale-[1.02]">
+            <div className="w-full md:max-w-[min(380px,calc(100vw-4rem))] bg-white/40 backdrop-blur-xl border border-white/60 p-5 sm:p-6 rounded-[2rem] shadow-[0_8px_32px_rgba(142,59,70,0.1)] transition-all hover:bg-white/50 hover:shadow-[0_12px_40px_rgba(142,59,70,0.15)]">
               <div className="w-10 h-10 rounded-full border border-rose-200 flex items-center justify-center mb-4 bg-white/50">
                 <MessageCircleHeart className="w-5 h-5 text-[#8E3B46]" />
               </div>
@@ -181,7 +181,7 @@ const Result = ({ result, userName = '', onViewRankings, onRestart }) => {
                 <textarea
                   value={feedback}
                   onChange={(e) => setFeedback(e.target.value)}
-                  className="w-full h-28 sm:h-24 bg-white/50 border border-white/60 rounded-xl p-4 text-sm focus:outline-hidden focus:ring-1 focus:ring-rose-300 placeholder-gray-400 resize-none shadow-inner"
+                  className="w-full h-28 sm:h-24 bg-white/50 border border-white/60 rounded-xl p-4 text-sm focus:outline-hidden focus:ring-1 focus:ring-rose-300 placeholder-gray-400 resize-none shadow-inner transition-all"
                   placeholder="Write your feedback…"
                   maxLength={500}
                 />
@@ -194,7 +194,7 @@ const Result = ({ result, userName = '', onViewRankings, onRestart }) => {
                 type="button"
                 onClick={handleSendFeedback}
                 disabled={!feedback.trim() || !bouquetDbId}
-                className="w-full min-h-[3rem] min-w-0 px-4 sm:px-6 py-3 rounded-full flex flex-row flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:flex-nowrap sm:justify-between bg-[#B56B74] hover:bg-[#8E3B46] disabled:opacity-45 disabled:pointer-events-none text-white transition-colors shadow-md magnetic text-base"
+                className="w-full min-h-[3rem] min-w-0 px-4 sm:px-6 py-3 rounded-full flex flex-row flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:flex-nowrap sm:justify-between bg-[#B5747E] text-white font-medium tracking-wide transition-all duration-300 hover:bg-[#8E3B46] disabled:opacity-40 disabled:pointer-events-none shadow-md hover:shadow-lg"
               >
                 <span className="font-medium tracking-wide text-center whitespace-nowrap">
                   Send
@@ -208,7 +208,7 @@ const Result = ({ result, userName = '', onViewRankings, onRestart }) => {
                 type="button"
                 disabled={!bouquetDbId || isSaving}
                 onClick={onViewRankings}
-                className="w-full md:w-max flex items-center space-x-4 sm:space-x-6 bg-white/40 backdrop-blur-xl border border-white/60 p-4 sm:pr-8 rounded-full shadow-[0_8px_32px_rgba(142,59,70,0.1)] group hover:bg-white/60 transition-all cursor-pointer magnetic justify-center md:justify-start"
+                className="w-full md:w-max flex items-center space-x-4 sm:space-x-6 bg-white/40 backdrop-blur-xl border border-white/60 p-4 sm:pr-8 rounded-full shadow-[0_8px_32px_rgba(142,59,70,0.1)] hover:bg-white/50 transition-all disabled:opacity-50 disabled:pointer-events-none group"
               >
                 <div className="w-14 h-14 rounded-full border border-rose-200 flex items-center justify-center bg-white/50 shrink-0">
                   <Flower2 className="w-7 h-7 text-[#8E3B46]" />
